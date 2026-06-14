@@ -1,1 +1,922 @@
-# code9
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code9 Community — Grow Together</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:     #0A0F1E;
+      --navy-2:   #111827;
+      --violet:   #7C3AED;
+      --violet-l: #9F67FF;
+      --cyan:     #22D3EE;
+      --cyan-l:   #67E8F9;
+      --white:    #F0F4FF;
+      --muted:    #64748B;
+      --card:     rgba(255,255,255,0.04);
+      --border:   rgba(255,255,255,0.08);
+      --glow-v:   rgba(124,58,237,0.35);
+      --glow-c:   rgba(34,211,238,0.25);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── GRID BG ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124,58,237,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── UTILITIES ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+    .section { padding: 100px 0; }
+    .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; display: block; }
+    .section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(32px, 5vw, 52px); font-weight: 700; line-height: 1.1; margin-bottom: 20px; }
+    .section-sub { color: var(--muted); font-size: 17px; max-width: 560px; line-height: 1.7; }
+    .gradient-text { background: linear-gradient(135deg, var(--violet-l), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 8px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 15px; text-decoration: none; cursor: pointer; border: none; transition: all 0.3s ease; }
+    .btn-primary { background: linear-gradient(135deg, var(--violet), var(--violet-l)); color: #fff; box-shadow: 0 0 30px var(--glow-v); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px var(--glow-v); }
+    .btn-outline { background: transparent; color: var(--cyan); border: 1px solid var(--cyan); }
+    .btn-outline:hover { background: rgba(34,211,238,0.08); transform: translateY(-2px); }
+    .glow-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--violet), var(--cyan), transparent); margin: 0; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 18px 0;
+      background: rgba(10,15,30,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+    nav.scrolled { padding: 12px 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .logo-badge { width: 32px; height: 32px; background: linear-gradient(135deg, var(--violet), var(--cyan)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: #fff; }
+    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+    .nav-links a { color: rgba(240,244,255,0.7); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta { padding: 10px 22px; font-size: 14px; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: all 0.3s; }
+    .mobile-menu { display: none; position: fixed; inset: 0; background: var(--navy); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 36px; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { color: var(--white); font-size: 24px; text-decoration: none; font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
+    .mobile-close { position: absolute; top: 24px; right: 24px; font-size: 28px; cursor: pointer; background: none; border: none; color: var(--white); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding-top: 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 65%);
+      top: -100px; left: -200px; pointer-events: none;
+    }
+    .hero-glow-2 {
+      position: absolute;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(34,211,238,0.12) 0%, transparent 65%);
+      bottom: 0; right: -100px; pointer-events: none;
+    }
+    .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); border-radius: 100px; padding: 6px 16px; font-size: 13px; font-family: 'JetBrains Mono', monospace; color: var(--violet-l); margin-bottom: 28px; }
+    .hero-eyebrow span { width: 6px; height: 6px; border-radius: 50%; background: var(--violet-l); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+    .hero-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(42px, 6vw, 72px); font-weight: 700; line-height: 1.05; margin-bottom: 24px; }
+    .hero-sub { color: var(--muted); font-size: 18px; line-height: 1.7; margin-bottom: 40px; max-width: 500px; }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 56px; }
+    .hero-stats { display: flex; gap: 40px; }
+    .stat-item { }
+    .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; }
+    .stat-label { font-size: 13px; color: var(--muted); }
+
+    /* Terminal */
+    .terminal {
+      background: #0D1117;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(124,58,237,0.2), 0 40px 80px rgba(0,0,0,0.5);
+    }
+    .term-bar {
+      background: #161B22;
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .term-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .term-dot.r { background: #FF5F57; }
+    .term-dot.y { background: #FEBC2E; }
+    .term-dot.g { background: #28C840; }
+    .term-title-bar { flex: 1; text-align: center; font-size: 13px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+    .term-body { padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.8; min-height: 280px; }
+    .term-line { display: flex; gap: 8px; }
+    .term-prompt { color: var(--violet-l); }
+    .term-cmd { color: var(--cyan); }
+    .term-output { color: rgba(240,244,255,0.6); padding-left: 0; }
+    .term-output.success { color: #4ADE80; }
+    .term-output.info { color: var(--cyan); }
+    .cursor { display: inline-block; width: 2px; height: 1em; background: var(--cyan); animation: blink 1s infinite; vertical-align: middle; margin-left: 2px; }
+    @keyframes blink { 0%,49%{opacity:1;} 50%,100%{opacity:0;} }
+
+    /* ── ABOUT ── */
+    #about { background: var(--navy-2); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-visual { position: relative; }
+    .about-card-main {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      backdrop-filter: blur(10px);
+    }
+    .about-icon { width: 56px; height: 56px; background: linear-gradient(135deg, var(--violet), var(--cyan)); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
+    .values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+    .value-pill { background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); border-radius: 8px; padding: 10px 14px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; color: var(--violet-l); }
+    .value-pill i { font-size: 12px; }
+    .float-badge {
+      position: absolute; bottom: -20px; right: -20px;
+      background: linear-gradient(135deg, var(--violet), var(--cyan));
+      border-radius: 16px; padding: 18px 24px;
+      text-align: center;
+    }
+    .float-badge .num { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #fff; }
+    .float-badge .lbl { font-size: 12px; color: rgba(255,255,255,0.8); }
+
+    /* ── SERVICES ── */
+    #services { }
+    .services-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; flex-wrap: wrap; gap: 20px; }
+    .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 24px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(124,58,237,0.05), rgba(34,211,238,0.05));
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .service-card:hover::before { opacity: 1; }
+    .service-card:hover { border-color: rgba(124,58,237,0.4); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 30px rgba(124,58,237,0.1); }
+    .service-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 20px; }
+    .service-title { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; margin-bottom: 10px; }
+    .service-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* icon bg variants */
+    .ic-v { background: rgba(124,58,237,0.15); color: var(--violet-l); }
+    .ic-c { background: rgba(34,211,238,0.15); color: var(--cyan); }
+    .ic-g { background: rgba(74,222,128,0.15); color: #4ADE80; }
+    .ic-o { background: rgba(251,146,60,0.15); color: #FB923C; }
+    .ic-p { background: rgba(244,63,94,0.15); color: #F43F5E; }
+    .ic-y { background: rgba(250,204,21,0.15); color: #FBBF24; }
+
+    /* ── BENEFITS ── */
+    #benefits { background: var(--navy-2); }
+    .benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }
+    .benefit-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      position: relative; overflow: hidden;
+      transition: all 0.3s;
+    }
+    .benefit-card:hover { transform: translateY(-4px); border-color: rgba(34,211,238,0.3); }
+    .benefit-card.featured { border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.06); }
+    .benefit-num { font-family: 'JetBrains Mono', monospace; font-size: 64px; font-weight: 600; color: rgba(124,58,237,0.15); line-height: 1; position: absolute; top: 20px; right: 24px; }
+    .benefit-icon { font-size: 28px; margin-bottom: 16px; }
+    .benefit-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 600; margin-bottom: 10px; }
+    .benefit-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── PROJECTS ── */
+    #projects { }
+    .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      transition: all 0.3s;
+    }
+    .project-card:hover { transform: translateY(-4px); border-color: rgba(124,58,237,0.4); }
+    .project-img { height: 160px; display: flex; align-items: center; justify-content: center; font-size: 48px; position: relative; }
+    .project-tag { position: absolute; top: 12px; right: 12px; background: rgba(124,58,237,0.8); font-size: 11px; padding: 4px 10px; border-radius: 100px; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
+    .project-body { padding: 24px; }
+    .project-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .project-desc { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+    .project-meta { display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--muted); }
+    .project-meta span { display: flex; align-items: center; gap: 4px; }
+    .project-meta i { color: var(--cyan); }
+    .achievement-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-top: 40px; }
+    .ach-item { background: var(--card); padding: 28px; text-align: center; }
+    .ach-num { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; }
+    .ach-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials { background: var(--navy-2); }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }
+    .testi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px; padding: 32px;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .testi-card:hover { border-color: rgba(124,58,237,0.3); transform: translateY(-3px); }
+    .testi-quote { font-size: 32px; color: var(--violet); line-height: 1; margin-bottom: 16px; font-family: Georgia, serif; }
+    .testi-text { font-size: 15px; color: rgba(240,244,255,0.8); line-height: 1.7; margin-bottom: 24px; }
+    .testi-stars { color: #FBBF24; font-size: 14px; margin-bottom: 16px; letter-spacing: 2px; }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; font-family: 'Space Grotesk', sans-serif; flex-shrink: 0; }
+    .testi-name { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 15px; }
+    .testi-role { font-size: 13px; color: var(--muted); }
+
+    /* ── JOIN ── */
+    #join { }
+    .join-box {
+      background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(34,211,238,0.08));
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 32px;
+      padding: 80px 60px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .join-box::before {
+      content: '';
+      position: absolute; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle at 50% 50%, rgba(124,58,237,0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .join-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(36px, 5vw, 56px); font-weight: 700; margin-bottom: 20px; }
+    .join-sub { color: var(--muted); font-size: 18px; margin-bottom: 44px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .join-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+    .contact-row { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .contact-item { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+    .contact-item i { color: var(--cyan); font-size: 16px; }
+    .contact-item a { color: rgba(240,244,255,0.8); text-decoration: none; }
+    .contact-item a:hover { color: var(--cyan); }
+    .social-links { display: flex; justify-content: center; gap: 16px; margin-top: 40px; }
+    .social-link { width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 17px; text-decoration: none; transition: all 0.3s; }
+    .social-link:hover { border-color: var(--violet); color: var(--violet-l); background: rgba(124,58,237,0.1); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #060A13;
+      border-top: 1px solid var(--border);
+      padding: 60px 0 32px;
+    }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand { }
+    .footer-logo { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+    .footer-desc { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 280px; }
+    .footer-heading { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { font-size: 14px; color: rgba(240,244,255,0.6); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 28px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 16px; }
+    .footer-copy { font-size: 13px; color: var(--muted); }
+    .footer-socials { display: flex; gap: 12px; }
+    .footer-socials a { color: var(--muted); font-size: 15px; transition: color 0.2s; }
+    .footer-socials a:hover { color: var(--cyan); }
+
+    /* ── SCROLL ANIMATIONS ── */
+    [data-reveal] { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    [data-reveal].visible { opacity: 1; transform: translateY(0); }
+    [data-reveal-delay="1"] { transition-delay: 0.1s; }
+    [data-reveal-delay="2"] { transition-delay: 0.2s; }
+    [data-reveal-delay="3"] { transition-delay: 0.3s; }
+    [data-reveal-delay="4"] { transition-delay: 0.4s; }
+    [data-reveal-delay="5"] { transition-delay: 0.5s; }
+    [data-reveal-delay="6"] { transition-delay: 0.6s; }
+    [data-reveal-delay="7"] { transition-delay: 0.7s; }
+    [data-reveal-delay="8"] { transition-delay: 0.8s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .section { padding: 70px 0; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .terminal { display: none; }
+      .about-grid { grid-template-columns: 1fr; }
+      .float-badge { display: none; }
+      .services-grid { grid-template-columns: 1fr; }
+      .benefits-grid { grid-template-columns: 1fr; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .achievement-strip { grid-template-columns: repeat(2, 1fr); }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .join-box { padding: 48px 24px; }
+      .contact-row { flex-direction: column; align-items: center; gap: 16px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .hero-stats { gap: 24px; }
+      .services-header { flex-direction: column; align-items: flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <div class="logo-badge">C9</div>
+        <span>Code<span class="gradient-text">9</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#benefits">Benefits</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#testimonials">Community</a></li>
+      </ul>
+      <a href="#join" class="btn btn-primary nav-cta">Join Code9</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose" aria-label="Close menu">✕</button>
+  <a href="#about" class="mob-link">About</a>
+  <a href="#services" class="mob-link">Services</a>
+  <a href="#benefits" class="mob-link">Benefits</a>
+  <a href="#projects" class="mob-link">Projects</a>
+  <a href="#testimonials" class="mob-link">Community</a>
+  <a href="#join" class="btn btn-primary">Join Code9</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-eyebrow"><span></span> Now accepting new members</div>
+        <h1 class="hero-title">Build. Learn.<br><span class="gradient-text">Grow Together.</span></h1>
+        <p class="hero-sub">Hello i am Dewanshu Dewangan from EEE final year I am building This frontend for Code9 </p>
+        <p class="hero-sub">Code9 is a tech-first community where developers, creators, and learners collaborate, ship real projects, and level up through mentorship and paid challenges.</p>
+        <div class="hero-actions">
+          <a href="#join" class="btn btn-primary"><i class="fas fa-rocket"></i> Join the Community</a>
+          <a href="#about" class="btn btn-outline">Learn More →</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-num gradient-text">500+</div>
+            <div class="stat-label">Members</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num gradient-text">80+</div>
+            <div class="stat-label">Projects Built</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num gradient-text">30+</div>
+            <div class="stat-label">Mentors</div>
+          </div>
+        </div>
+      </div>
+      <!-- Terminal -->
+      <div class="terminal" id="terminal">
+        <div class="term-bar">
+          <div class="term-dot r"></div>
+          <div class="term-dot y"></div>
+          <div class="term-dot g"></div>
+          <div class="term-title-bar">code9 — zsh</div>
+        </div>
+        <div class="term-body" id="termBody"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ══ ABOUT ══ -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-visual" data-reveal>
+        <div class="about-card-main">
+          <div class="about-icon">🚀</div>
+          <h3 style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;margin-bottom:12px;">Who We Are</h3>
+          <p style="color:var(--muted);font-size:15px;line-height:1.7;">Code9 was born from a simple belief: <strong style="color:var(--white);">great developers are made in communities, not isolation.</strong> We bring together students, developers, creators, and tech enthusiasts under one roof.</p>
+          <div class="values-grid">
+            <div class="value-pill"><i class="fas fa-check-circle"></i> Openness</div>
+            <div class="value-pill"><i class="fas fa-check-circle"></i> Collaboration</div>
+            <div class="value-pill"><i class="fas fa-check-circle"></i> Growth Mindset</div>
+            <div class="value-pill"><i class="fas fa-check-circle"></i> Innovation</div>
+            <div class="value-pill"><i class="fas fa-check-circle"></i> Inclusivity</div>
+            <div class="value-pill"><i class="fas fa-check-circle"></i> Excellence</div>
+          </div>
+        </div>
+        <div class="float-badge">
+          <div class="num">🏆</div>
+          <div class="num">Top 1%</div>
+          <div class="lbl">Community Network</div>
+        </div>
+      </div>
+      <div data-reveal data-reveal-delay="2">
+        <span class="section-tag">// about code9</span>
+        <h2 class="section-title">Where passion meets <span class="gradient-text">purpose</span></h2>
+        <p class="section-sub" style="margin-bottom:28px;">Code9 is a tech-focused community where members collaborate, learn, build projects, participate in paid challenges, and receive mentorship from experienced practitioners in the field.</p>
+        <div style="margin-bottom:28px;">
+          <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;">
+            <div style="width:40px;height:40px;border-radius:10px;background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">🎯</div>
+            <div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;margin-bottom:4px;">Our Mission</div>
+              <div style="font-size:14px;color:var(--muted);">To build a thriving ecosystem where every member grows through hands-on projects, expert mentorship, and real-world challenges.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:16px;">
+            <div style="width:40px;height:40px;border-radius:10px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">🔭</div>
+            <div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;margin-bottom:4px;">Our Vision</div>
+              <div style="font-size:14px;color:var(--muted);">To become the go-to community for tech learners who want to turn their skills into impact — and get rewarded for it.</div>
+            </div>
+          </div>
+        </div>
+        <a href="#join" class="btn btn-primary">Join Our Community →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ══ SERVICES ══ -->
+<section id="services" class="section">
+  <div class="container">
+    <div class="services-header">
+      <div data-reveal>
+        <span class="section-tag">// what we offer</span>
+        <h2 class="section-title">Services & <span class="gradient-text">Expertise</span></h2>
+      </div>
+      <p class="section-sub" data-reveal data-reveal-delay="2">From development to creative work — Code9 covers the full stack of tech services.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card" data-reveal data-reveal-delay="1">
+        <div class="service-icon ic-v"><i class="fas fa-code"></i></div>
+        <div class="service-title">Web Development</div>
+        <div class="service-desc">Modern, performant websites and web apps built with the latest technologies and best practices.</div>
+      </div>
+      <div class="service-card" data-reveal data-reveal-delay="2">
+        <div class="service-icon ic-c"><i class="fas fa-mobile-alt"></i></div>
+        <div class="service-title">App Development</div>
+        <div class="service-desc">Cross-platform mobile applications crafted for seamless user experiences on iOS and Android.</div>
+      </div>
+      <div class="service-card" data-reveal data-reveal-delay="3">
+        <div class="service-icon ic-g"><i class="fas fa-search"></i></div>
+        <div class="service-title">SEO Services</div>
+        <div class="service-desc">Data-driven SEO strategies to boost your visibility, rankings, and organic traffic growth.</div>
+      </div>
+      <div class="service-card" data-reveal data-reveal-delay="4">
+        <div class="service-icon ic-o"><i class="fas fa-video"></i></div>
+        <div class="service-title">Video Editing</div>
+        <div class="service-desc">Professional video editing for content creators, brands, and educational channels.</div>
+      </div>
+      <div class="service-card" data-reveal data-reveal-delay="5">
+        <div class="service-icon ic-p"><i class="fas fa-headset"></i></div>
+        <div class="service-title">Technical Support</div>
+        <div class="service-desc">Expert technical guidance to debug, optimize, and maintain your products reliably.</div>
+      </div>
+      <div class="service-card" data-reveal data-reveal-delay="6">
+        <div class="service-icon ic-y"><i class="fas fa-book-open"></i></div>
+        <div class="service-title">Learning Resources</div>
+        <div class="service-desc">Curated study material, roadmaps, and structured content to fast-track your tech career.</div>
+      </div>
+      <div class="service-card" data-reveal data-reveal-delay="7">
+        <div class="service-icon ic-c"><i class="fas fa-robot"></i></div>
+        <div class="service-title">Robotics Resources</div>
+        <div class="service-desc">Hands-on robotics learning resources and workshop materials for hardware enthusiasts.</div>
+      </div>
+      <div class="service-card" data-reveal data-reveal-delay="8">
+        <div class="service-icon ic-v"><i class="fas fa-user-graduate"></i></div>
+        <div class="service-title">Mentorship</div>
+        <div class="service-desc">1-on-1 and group mentorship from industry professionals who've been where you want to go.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ══ BENEFITS ══ -->
+<section id="benefits" class="section">
+  <div class="container">
+    <div style="text-align:center;max-width:640px;margin:0 auto 60px;" data-reveal>
+      <span class="section-tag">// why join us</span>
+      <h2 class="section-title">Everything you need to <span class="gradient-text">level up</span></h2>
+      <p class="section-sub" style="margin:0 auto;">Code9 gives you more than a community — it gives you the tools, people, and opportunities to build a career you're proud of.</p>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-card featured" data-reveal data-reveal-delay="1">
+        <div class="benefit-num">01</div>
+        <div class="benefit-icon">🤝</div>
+        <div class="benefit-title">Project Collaboration</div>
+        <div class="benefit-desc">Work on real-world projects alongside peers and industry professionals. Build a portfolio that actually impresses.</div>
+      </div>
+      <div class="benefit-card" data-reveal data-reveal-delay="2">
+        <div class="benefit-num">02</div>
+        <div class="benefit-icon">🌐</div>
+        <div class="benefit-title">Networking Opportunities</div>
+        <div class="benefit-desc">Connect with like-minded developers, designers, and tech leads who can open doors you didn't know existed.</div>
+      </div>
+      <div class="benefit-card" data-reveal data-reveal-delay="3">
+        <div class="benefit-num">03</div>
+        <div class="benefit-icon">💰</div>
+        <div class="benefit-title">Paid Challenges</div>
+        <div class="benefit-desc">Compete in sponsored challenges and hackathons with real monetary rewards. Your skills can earn you.</div>
+      </div>
+      <div class="benefit-card" data-reveal data-reveal-delay="4">
+        <div class="benefit-num">04</div>
+        <div class="benefit-icon">🧭</div>
+        <div class="benefit-title">Mentorship Programs</div>
+        <div class="benefit-desc">Get guided by experienced developers who've navigated the exact journey you're on right now.</div>
+      </div>
+      <div class="benefit-card" data-reveal data-reveal-delay="5">
+        <div class="benefit-num">05</div>
+        <div class="benefit-icon">📈</div>
+        <div class="benefit-title">Skill Development</div>
+        <div class="benefit-desc">Structured learning tracks, workshops, and hands-on sessions designed to turn beginners into builders.</div>
+      </div>
+      <div class="benefit-card featured" data-reveal data-reveal-delay="6">
+        <div class="benefit-num">06</div>
+        <div class="benefit-icon">🚀</div>
+        <div class="benefit-title">Launch Your Career</div>
+        <div class="benefit-desc">From internships to full-time roles — our network actively helps members land opportunities that match their ambition.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ══ PROJECTS ══ -->
+<section id="projects" class="section">
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:60px;flex-wrap:wrap;gap:20px;">
+      <div data-reveal>
+        <span class="section-tag">// featured work</span>
+        <h2 class="section-title">Projects & <span class="gradient-text">Achievements</span></h2>
+      </div>
+      <p class="section-sub" style="max-width:360px;" data-reveal data-reveal-delay="2">Real projects shipped by real community members.</p>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card" data-reveal data-reveal-delay="1">
+        <div class="project-img" style="background:linear-gradient(135deg,#1a0533,#2a0d5a);">
+          🏥
+          <span class="project-tag">WEB APP</span>
+        </div>
+        <div class="project-body">
+          <div class="project-title">HealthTrack Dashboard</div>
+          <div class="project-desc">Hi i am dewanshu my aim project is a real-time patient monitoring dashboard built by 4 community members during a 72-hour hackathon.</div>
+          <div class="project-meta">
+            <span><i class="fas fa-users"></i> 4 members Dewanshu-lucky-Anush-Ayush</span>
+            <span><i class="fas fa-star"></i> Runner up</span>
+            <span><i class="fab fa-github"></i> Open Source</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card" data-reveal data-reveal-delay="2">
+        <div class="project-img" style="background:linear-gradient(135deg,#003344,#006688);">
+          🤖
+          <span class="project-tag">AI/ML</span>
+        </div>
+        <div class="project-body">
+          <div class="project-title">ResumeAI Optimizer</div>
+          <div class="project-desc">Hi i am dewanshu my aim project is an AI-powered resume scoring tool that helped community members land interviews at top companies.</div>
+          <div class="project-meta">
+            <span><i class="fas fa-users"></i> 4 members</span>
+            <span><i class="fas fa-download"></i> X users</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card" data-reveal data-reveal-delay="3">
+        <div class="project-img" style="background:linear-gradient(135deg,#1a2a00,#3a5a00);">
+          📱
+          <span class="project-tag">MOBILE</span>
+        </div>
+        <div class="project-body">
+          <div class="project-title">StudyBuddy App</div>
+          <div class="project-desc">Hi i am dewanshu my aim project is a cross-platform Pomodoro and notes app with peer accountability features, built in React Native.</div>
+          <div class="project-meta">
+            <span><i class="fas fa-users"></i> 4 members</span>
+            <span><i class="fas fa-mobile-alt"></i> iOS & Android</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="achievement-strip" data-reveal>
+      <div class="ach-item">
+        <div class="ach-num gradient-text">In Future</div>
+        <div class="ach-label">Hackathons Won</div>
+      </div>
+      <div class="ach-item">
+        <div class="ach-num gradient-text">0+</div>
+        <div class="ach-label">Projects Shipped</div>
+      </div>
+      <div class="ach-item">
+        <div class="ach-num gradient-text">0+</div>
+        <div class="ach-label">Prizes Won</div>
+      </div>
+      <div class="ach-item">
+        <div class="ach-num gradient-text">0+</div>
+        <div class="ach-label">Jobs Referred</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section id="testimonials" class="section">
+  <div class="container">
+    <div style="text-align:center;max-width:560px;margin:0 auto 60px;" data-reveal>
+      <span class="section-tag">// community voices</span>
+      <h2 class="section-title">What our <span class="gradient-text">members say</span></h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testi-card" data-reveal data-reveal-delay="1">
+        <div class="testi-quote">"</div>
+        <div class="testi-text">Code9 completely changed how I approach learning. I went from watching tutorials to actually building products with a team. The mentorship here is unmatched.</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#7C3AED,#9F67FF);">DD</div>
+          <div>
+            <div class="testi-name">Dewanshu Dewangan</div>
+            <div class="testi-role">Full Stack Developer, GECR</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card" data-reveal data-reveal-delay="2">
+        <div class="testi-quote">"</div>
+        <div class="testi-text">I joined for the paid challenges and stayed for the community. Won ₹15,000 in my second month. The environment is incredibly supportive and the quality of peers is top-tier.</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#22D3EE,#67E8F9);color:#0A0F1E;">PS</div>
+          <div>
+            <div class="testi-name">Priya Sharma</div>
+            <div class="testi-role">UI/UX Designer, GECR</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card" data-reveal data-reveal-delay="3">
+        <div class="testi-quote">"</div>
+        <div class="testi-text">As a final-year student, finding the right community felt impossible. Code9 gave me mentors, teammates for hackathons, and even my first freelance client. 10/10.</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#FB923C,#FBBF24);color:#0A0F1E;">L</div>
+          <div>
+            <div class="testi-name">Lucky</div>
+            <div class="testi-role">EEE Student, GECR</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card" data-reveal data-reveal-delay="4">
+        <div class="testi-quote">"</div>
+        <div class="testi-text">The robotics workshop at Code9 got me my internship. The community's hands-on approach and the quality of technical support blew me away. Best decision I've made.</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#4ADE80,#22D3EE);color:#0A0F1E;">NJ</div>
+          <div>
+            <div class="testi-name">Neha Joshi</div>
+            <div class="testi-role">Student, GECR</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card" data-reveal data-reveal-delay="5">
+        <div class="testi-quote">"</div>
+        <div class="testi-text">Code9's SEO team helped grow our startup's organic traffic by 340% in 3 months. The expertise in this community is genuinely startup-grade. Highly recommend.</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#F43F5E,#FB923C);color:#fff;">SM</div>
+          <div>
+            <div class="testi-name">Sahil Mehta</div>
+            <div class="testi-role">Student, GECR</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card" data-reveal data-reveal-delay="6">
+        <div class="testi-quote">"</div>
+        <div class="testi-text">I was skeptical about online tech communities, but Code9 proved me completely wrong. The collaboration culture, the real project exposure — it's unlike anything I've experienced.</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#7C3AED,#22D3EE);">KS</div>
+          <div>
+            <div class="testi-name">Kavya Singh</div>
+            <div class="testi-role">Student, GECR</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ══ JOIN ══ -->
+<section id="join" class="section">
+  <div class="container">
+    <div class="join-box" data-reveal>
+      <span class="section-tag" style="display:block;text-align:center;">// ready to begin?</span>
+      <h2 class="join-title">Your next chapter <span class="gradient-text">starts here</span></h2>
+      <p class="join-sub">Join Code9 today and get access to mentors, projects, paid challenges, and a community of builders who are serious about growth.</p>
+      <div class="join-actions">
+        <a href="#" class="btn btn-primary" style="font-size:17px;padding:16px 36px;"><i class="fas fa-rocket"></i> Join Code9 Free</a>
+        <a href="#" class="btn btn-outline" style="font-size:17px;padding:16px 36px;">See How It Works</a>
+      </div>
+      <div class="contact-row">
+        <div class="contact-item"><i class="fas fa-envelope"></i><a href="mailto:dewanshudewangan028@gmail.com">dewanshudewangan028@gmail.com</a></div>
+        <div class="contact-item"><i class="fab fa-discord"></i><a href="#">discord</a></div>
+        <div class="contact-item"><i class="fab fa-discord"></i><a href="#">linkdin</a></div>
+        <div class="contact-item"><i class="fab fa-discord"></i><a href="#">X</a></div>
+        <div class="contact-item"><i class="fab fa-whatsapp"></i><a href="#">WhatsApp Group</a></div>
+      </div>
+      <div class="social-links">
+        <a href="#" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+        <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="#" class="social-link" aria-label="Discord"><i class="fab fa-discord"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="logo-badge">C9</div>
+          <span>Code<span class="gradient-text">9</span></span>
+        </div>
+        <p class="footer-desc">A community that believes in growing together — through learning, collaboration, mentorship, and real-world projects.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Quick Links</div>
+        <ul class="footer-links">
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#benefits">Benefits</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#join">Join Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Services</div>
+        <ul class="footer-links">
+          <li><a href="#">Web Development</a></li>
+          <li><a href="#">App Development</a></li>
+          <li><a href="#">SEO Services</a></li>
+          <li><a href="#">Video Editing</a></li>
+          <li><a href="#">Mentorship</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Contact</div>
+        <ul class="footer-links">
+          <li><a href="dewanshudewangan028@gmail.com">Dewanshu</a></li>
+          <li><a href="#">discord</a></li>
+          <li><a href="#">WhatsApp Community</a></li>
+          <li><a href="#">Twitter / X</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 Code9 Community. All rights reserved. Built with ❤️ by DEWANSHU.</div>
+      <div class="footer-socials">
+        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Terminal Animation ──
+const termLines = [
+  { type: 'cmd', prompt: '❯', text: 'join code9 --community' },
+  { type: 'out', cls: 'info', text: '  Connecting to Code9 network...' },
+  { type: 'out', cls: 'success', text: '  ✓ 500+ members online' },
+  { type: 'out', cls: 'success', text: '  ✓ 80+ projects active' },
+  { type: 'out', cls: 'success', text: '  ✓ Mentors available now' },
+  { type: 'cmd', prompt: '❯', text: 'ls ./opportunities' },
+  { type: 'out', cls: '', text: '  paid-challenges/   mentorship/   projects/' },
+  { type: 'out', cls: '', text: '  workshops/         resources/    networking/' },
+  { type: 'cmd', prompt: '❯', text: 'code9 --start-learning' },
+  { type: 'out', cls: 'success', text: '  Welcome to Code9. Let\'s build. 🚀' },
+];
+
+const termBody = document.getElementById('termBody');
+let lineIdx = 0, charIdx = 0;
+
+function renderLine(line) {
+  const el = document.createElement('div');
+  el.className = 'term-line';
+  if (line.type === 'cmd') {
+    el.innerHTML = `<span class="term-prompt">${line.prompt}</span><span class="term-cmd"></span>`;
+    termBody.appendChild(el);
+    const cmdEl = el.querySelector('.term-cmd');
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    cmdEl.after(cursor);
+    let i = 0;
+    const type = () => {
+      if (i < line.text.length) {
+        cmdEl.textContent += line.text[i++];
+        setTimeout(type, 45);
+      } else {
+        cursor.remove();
+        setTimeout(nextLine, 400);
+      }
+    };
+    setTimeout(type, 200);
+  } else {
+    el.innerHTML = `<span class="term-output ${line.cls}">${line.text}</span>`;
+    termBody.appendChild(el);
+    termBody.scrollTop = termBody.scrollHeight;
+    setTimeout(nextLine, 120);
+  }
+}
+
+function nextLine() {
+  if (lineIdx < termLines.length) {
+    renderLine(termLines[lineIdx++]);
+  }
+}
+
+setTimeout(nextLine, 800);
+
+// ── Nav scroll ──
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ── Mobile menu ──
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+const mobileClose = document.getElementById('mobileClose');
+hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+mobileClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('open')));
+
+// ── Scroll reveal ──
+const revealEls = document.querySelectorAll('[data-reveal]');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
